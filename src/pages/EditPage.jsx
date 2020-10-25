@@ -9,13 +9,24 @@ export class EditPage extends React.Component {
         this.jsEditor = createRef()
         this.handleSave = this.handleSave.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.state = {
+            name: "",
+            title: "",
+        }
     }
 
     componentDidMount() {
+        const formData = new FormData();
         const uri = window.location.pathname.split("/")
         const pageId = uri[uri.length - 1];
-        this.htmlEditor.current.editor.setValue("а тут что-то из базы данных")
-
+        formData.append("pageId",pageId);
+        fetch("http://ger.derk34.beget.tech/editPage",{
+            method: 'POST',
+            body: formData
+        })
+            .then(response=>response.json())
+            .then(result=>console.log(result))
+            this.htmlEditor.current.editor.setValue("nnn");
     }
 
     handleSave() {
@@ -23,7 +34,7 @@ export class EditPage extends React.Component {
         let formData = new FormData();
         formData.append('name',this.state.name);
         formData.append('title',this.state.title);
-        formData.append('html',this.htmlEditor.current.editor.getValue());
+        formData.append('html',this.htmlEditor.current.editor.getValue())
         formData.append('css',this.cssEditor.current.editor.getValue());
         formData.append('js',this.jsEditor.current.editor.getValue());
         fetch("http://ger.derk34.beget.tech/editPage", {
@@ -34,7 +45,14 @@ export class EditPage extends React.Component {
             .then(result=>console.log(result))
     }
 
-    handleInputChange() {
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value
+        })
+
     }
 
     render() {
