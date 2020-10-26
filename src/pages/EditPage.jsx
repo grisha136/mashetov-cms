@@ -26,7 +26,6 @@ export class EditPage extends React.Component {
         })
             .then(response=>response.json())
             .then(result=>console.log(result))
-            this.htmlEditor.current.editor.setValue("nnn");
     }
 
     handleSave() {
