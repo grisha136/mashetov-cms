@@ -63,7 +63,6 @@ export class EditPage extends React.Component {
         this.setState({
             [name]: value
         })
-
     }
 
     render() {
