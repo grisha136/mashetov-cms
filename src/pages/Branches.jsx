@@ -45,7 +45,7 @@ export class Branches extends React.Component {
                 {this.state.branches}
                 </tbody>
             </table>
-            <NavLink className="btn btn-primary" to="addBranch">Добавить раздел сайта</NavLink>
+            <NavLink className="btn btn-primary" to="addBranch"><i className="fas fa-plus-square"></i> Добавить раздел сайта</NavLink>
         </div>
     }
 }
