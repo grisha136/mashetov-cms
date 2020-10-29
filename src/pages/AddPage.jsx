@@ -6,6 +6,12 @@ import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-vibrant_ink";
 import "emmet-core"
 import "ace-builds/src-noconflict/ext-emmet"
+import {cmsPath, host} from "../config";
+import {Redirect} from "react-router-dom";
+
+const Option = (props)=> {
+    return <option value = {props.id}>{props.name_rus}</option>
+}
 
 export class AddPage extends  React.Component{
     constructor() {
@@ -17,7 +23,10 @@ export class AddPage extends  React.Component{
         this.handleInputChange = this.handleInputChange.bind(this);
         this.state = {
             name: "",
-            title: ""
+            title: "",
+            options: [],
+            branch: 1,
+            referrer: null
         }
     }
 
@@ -28,17 +37,28 @@ export class AddPage extends  React.Component{
         formData.append('html',this.htmlEditor.current.editor.getValue());
         formData.append('css',this.cssEditor.current.editor.getValue());
         formData.append('js',this.jsEditor.current.editor.getValue());
+        formData.append('branch',this.state.branch);
         fetch("http://ger.derk34.beget.tech/addPage", {
             method: "POST",
             body: formData
         })
             .then(response=>response.json())
-            .then(result=>console.log(result))
+             .then(result=>{
+                this.setState({
+                    referrer: "pages/"
+                })
+            })
     }
 
 
     componentDidMount() {
-        console.log("Вызвана функция ComponentDitMount")
+         fetch(host +"getBranchesJSON")
+            .then(response=>response.json())
+            .then(branches=>{
+                this.setState({
+                    options: branches.map((branch,index)=><Option key = {index} id = {branch.id} name_rus = {branch.name_rus}/>)
+                })
+            })
     }
 
     handleInputChange(event) {
@@ -51,18 +71,20 @@ export class AddPage extends  React.Component{
     }
 
     render() {
+        const referrer = this.state.referrer;
+        if (referrer) return <Redirect to = {cmsPath + referrer}/>
         return <div>
         <nav>
             <div className="nav nav-tabs" id="nav-tab" role="tablist">
                 <a className="nav-link active" id="nav-html-tab" data-toggle="tab" href="#nav-html" role="tab"
-                   aria-controls="nav-html" aria-selected="true">HTML</a>
+                   aria-controls="nav-html" aria-selected="true"><i className="fab fa-html5"></i> HTML</a>
                 <a className="nav-link" id="nav-css-tab" data-toggle="tab" href="#nav-css" role="tab"
-                   aria-controls="nav-css" aria-selected="false">CSS</a>
+                   aria-controls="nav-css" aria-selected="false"><i className="fab fa-css3-alt"></i> CSS</a>
                 <a className="nav-link" id="nav-js-tab" data-toggle="tab" href="#nav-js" role="tab"
-                   aria-controls="nav-js" aria-selected="false">JS</a>
+                   aria-controls="nav-js" aria-selected="false"><i className="fab fa-js"></i> JS</a>
                 <a className="nav-link" id="nav-extraHTML-tab" data-toggle="tab" href="#nav-extraHTML" role="tab"
-                   aria-controls="nav-extraHTML" aria-selected="false">Параметры</a>
-                <button onClick={this.handleSave} className="btn btn-light ml-auto">[сохранить]</button>
+                   aria-controls="nav-extraHTML" aria-selected="false"><i className="fas fa-sliders-h"></i> Параметры</a>
+                <button onClick={this.handleSave} className="btn btn-light ml-auto"><i className="fas fa-save"></i> [сохранить]</button>
             </div>
         </nav>
         <div className="tab-content" id="nav-tabContent">
